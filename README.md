@@ -1,6 +1,8 @@
 # Copilot Visual Studio Code extension for AI Ops
 
-Must run from VSC Insiders.
+Make your AI Ops workflow easier with Copilot Visual Studio Code extension.
+
+Use the latest VSCode, GitHub Copilot & Copilot Chat extensions. 
 
 Invoke like:
 

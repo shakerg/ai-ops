@@ -1,11 +1,11 @@
 {
 	"name": "ai-ops",
-	"publisher": "vscode-samples",
+	"publisher": "shakerg",
 	"displayName": "ai-ops",
 	"description": "Natural language application operations",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/octodemo/ai-ops"
+		"url": "https://github.com/shakerg/ai-ops"
 	},
 	"version": "0.1.0",
 	"engines": {
@@ -38,7 +38,7 @@
 				},
 				"environments.repo": {
 					"type": "string",
-					"default": "https://github.com/octodemo/universe-recap/",
+					"default": "$repo-path",
 					"description": "Repo Name "
 				},
 				"environments.token": {
@@ -48,7 +48,7 @@
 				},
 				"environments.org": {
 					"type": "string",
-					"default": "octodemo",
+					"default": "$org",
 					"description": "Org Name "
 				}
 			}

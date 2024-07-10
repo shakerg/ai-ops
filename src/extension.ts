@@ -23,7 +23,7 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.env.openExternal(vscode.Uri.parse(url));
 	}));
 
-	
+
 	const handler: vscode.ChatRequestHandler = async (
 		request: vscode.ChatRequest,
 		context: vscode.ChatContext,
@@ -35,7 +35,7 @@ export function activate(context: vscode.ExtensionContext) {
 		const GHAPIKey = envs.get('token') as string ?? '';
 		const octokit = new Octokit({
 			auth: GHAPIKey,
-		  });
+		});
 		const GHRepo = envs.get('repo') as string ?? '';
 		const GHOrg = envs.get('org') as string ?? '';
 
@@ -50,47 +50,47 @@ export function activate(context: vscode.ExtensionContext) {
 		} else if (request.command == 'status') {
 			console.log('Getting status of workflow');
 			stream.progress('Getting status of workflow...');
-						
+
 			const parts = request.prompt.split(' ');
 			const workflowFileName = parts[0];
 
 			async function getWorkflowStatus() {
-			try {
-				const { data } = await octokit.actions.listWorkflowRunsForRepo({
-				owner: GHOrg,
-				repo: GHRepo,
-				workflow_id: "deploy-azure.yml" // hard coded value for easy demo.
-				});
+				try {
+					const { data } = await octokit.actions.listWorkflowRunsForRepo({
+						owner: GHOrg,
+						repo: GHRepo,
+						workflow_id: "deploy-azure.yml" // hard coded value for easy demo.
+					});
 
-				stream.progress('Status of ' + workflowFileName + ' retrieved...');
+					stream.progress('Status of ' + workflowFileName + ' retrieved...');
 
-				// if data.workflow_runs[0].conclusion is null, then set it to equal 'In Progress'
-				if (data.workflow_runs[0].conclusion === null) {
-					data.workflow_runs[0].conclusion = 'In Progress';
+					// if data.workflow_runs[0].conclusion is null, then set it to equal 'In Progress'
+					if (data.workflow_runs[0].conclusion === null) {
+						data.workflow_runs[0].conclusion = 'In Progress';
+					}
+
+					const status = `**${data.workflow_runs[0].display_title}**\n\nStatus - _${data.workflow_runs[0].conclusion}_`;
+					console.log(status);
+					//conclusion
+					// Set a 3-second timeout before pushing status to chat
+					await new Promise(resolve => setTimeout(resolve, 3000));
+
+					//push status to chat;
+					stream.markdown(status);
+					// stream button that directs to workflow run
+
+					const command: vscode.Command = {
+						command: 'extension.openUrl',
+						title: 'View Workflow Run',
+						arguments: [data.workflow_runs[0].html_url]
+					};
+
+					stream.button(command);
+
+					return { metadata: { command: 'status' } };
+				} catch (err) {
+					console.error(err);
 				}
-
-				const status = `**${data.workflow_runs[0].display_title}**\n\nStatus - _${data.workflow_runs[0].conclusion}_`;
-				console.log(status);
-				//conclusion
-				// Set a 3-second timeout before pushing status to chat
-				await new Promise(resolve => setTimeout(resolve, 3000));
-
-				//push status to chat;
-				stream.markdown(status);
-				// stream button that directs to workflow run
-
-				const command: vscode.Command = {
-					command: 'extension.openUrl',
-					title: 'View Workflow Run',
-					arguments: [data.workflow_runs[0].html_url]
-				  };
-			
-				stream.button(command);
-
-				return { metadata: { command: 'status' } };
-			} catch (err) {
-				console.error(err);
-			}
 			}
 
 			// Await the getWorkflowStatus function
@@ -145,7 +145,7 @@ export function activate(context: vscode.ExtensionContext) {
 			);
 			for await (const fragment of chatResponse.stream) {
 				// Process the output from the language model
-				
+
 				stream.markdown(fragment);
 			}
 
@@ -157,7 +157,7 @@ export function activate(context: vscode.ExtensionContext) {
 	// when you type `@`, and can contribute sub-commands in the chat input
 	// that appear when you type `/`.
 	const participant = vscode.chat.createChatParticipant(PARTICIPANT_ID, handler);
-	participant.iconPath = vscode.Uri.joinPath(context.extensionUri, 'logo.jpeg');
+	participant.iconPath = vscode.Uri.joinPath(context.extensionUri, 'github.png');
 	participant.followupProvider = {
 		provideFollowups(
 			result: AIOpsChatResult,
@@ -175,4 +175,4 @@ export function activate(context: vscode.ExtensionContext) {
 	};
 }
 
-export function deactivate() {}
+export function deactivate() { }
